@@ -27,7 +27,6 @@ class Router
     {
         foreach (self::$routes as $pattern => $route) {
             if (preg_match("#$pattern#i", $url, $matches)) {
-                debug($matches);
                 foreach ($matches as $k => $v) {
                     if (is_string($k)) {
                         $route[$k] = $v;
@@ -51,7 +50,6 @@ class Router
     public static function dispatch($url)
     {
         $url = self::removeQueryString($url);
-        var_dump($url);
         if (self::matchRoute($url)) {
             $controller = 'app\controllers\\' . self::$route['controller'];
             if (class_exists($controller)) {
@@ -59,6 +57,7 @@ class Router
                 $action = self::lowerCamelCase(self::$route['action']) . 'Action';
                 if (method_exists($cObj, $action)) {
                     $cObj->$action();
+                    $cObj->getView();
                 } else {
                     echo "Метод <b>$controller::$action</b> не найден";
                 }
@@ -90,7 +89,6 @@ class Router
                 return '';
             }
         }
-        debug($url);
         return $url;
     }
 }
